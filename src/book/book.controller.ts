@@ -1,8 +1,22 @@
-import { Controller, Get, Body, Post, Param, Delete, Put } from '@nestjs/common';
+import { 
+    Controller,
+    Get, 
+    Body, 
+    Post, 
+    Param, 
+    Delete, 
+    Put,
+    Query, 
+    UseGuards,
+    Req
+} from '@nestjs/common';
 import { BookService } from './book.service';
 import { Book } from './schemas/book.schema';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto'; 
+import { Query as ExpressQuery } from 'express-serve-static-core';
+import { AuthGuard } from '@nestjs/passport';
+
 
 @Controller('books')
 export class BookController {
@@ -13,15 +27,19 @@ export class BookController {
     }
 
     @Get()
-    async getAllBooks(){
-      return this.bookService.findAll();
+    async getAllBooks(
+        @Query() query:ExpressQuery,
+    ):Promise<Book[]>{
+      return this.bookService.findAll(query);
     }
     
     @Post()
+    @UseGuards(AuthGuard())
     async createBook(
-        @Body() book:CreateBookDto
+        @Body() book:CreateBookDto,
+        @Req() req
     ):Promise<Book>{
-        return this.bookService.create(book);
+        return this.bookService.create(book, req.user);
     }
 
     @Get(':id')
@@ -34,9 +52,10 @@ export class BookController {
     @Put(':id')
     async updateBook(
         @Param('id') id:string,
-        @Body() book:UpdateBookDto
+        @Body() book:UpdateBookDto,
+        @Req() req
     ):Promise<Book>{
-        return this.bookService.updateById(id, book);
+        return this.bookService.updateById(id, book, req.user);
     }
 
     @Delete(':id')
