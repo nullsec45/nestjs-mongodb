@@ -1,5 +1,7 @@
 import {Category} from '../schemas/book.schema';    
-import { User } from 'src/auth/schemas/user.schema';
+// import { User } from 'src/auth/schemas/user.schema';
+import { User } from "../../auth/schemas/user.schema";
+
 
 import {
     IsNotEmpty,
