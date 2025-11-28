@@ -1,11 +1,12 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { Book } from './schemas/book.schema';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { Query  } from 'express-serve-static-core';
-import { User } from 'src/auth/schemas/user.schema';
+// import { User } from 'src/auth/schemas/user.schema';
+import { User } from "../auth/schemas/user.schema";
 
 
 @Injectable()
@@ -54,7 +55,7 @@ export class BookService {
         const book=await this.bookModel.findById(id);
 
         if(!book){
-            throw new Error('Book not found');
+            throw new NotFoundException('Book not found');
         }
         return book;
     }
