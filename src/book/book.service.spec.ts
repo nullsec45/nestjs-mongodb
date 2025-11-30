@@ -5,6 +5,9 @@ import { Book, Category } from './schemas/book.schema';
 import mongoose, { Model } from 'mongoose';
 import { mock } from 'node:test';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { User } from 'src/auth/schemas/user.schema';
+import { CreateBookDto } from './dto/create-book.dto';
+import { create } from 'domain';
 
 describe('BookService',() => {
     let bookService:BookService;
@@ -19,8 +22,24 @@ describe('BookService',() => {
         category: Category.ADVENTURE,
     }
 
+    const newBookMock={
+        title: 'Negeri Para Bedebah',
+        description: 'BOok Description',
+        author: 'Tere Liye',
+        price: 850000,
+        category: Category.ADVENTURE,
+        user:'690612d0a60580a8b3d82663'
+    };
+
+    const mockUser={
+        _id:'690612d0a60580a8b3d82663',
+        name: 'fajar',
+        email: 'fajar@example.com',
+    };
+
     const mockBookService={
         find:jest.fn(),
+        create:jest.fn(),
         findById:jest.fn()
     };
 
@@ -37,6 +56,28 @@ describe('BookService',() => {
 
         bookService = module.get<BookService>(BookService);
         model = module.get<Model<Book>>(getModelToken(Book.name));
+    });
+
+    describe('create',() => {
+        it('should create and return a book', async() => {
+            const newBook={
+                title: 'Negeri Para Bedebah',
+                description: 'BOok Description',
+                author: 'Tere Liye',
+                price: 850000,
+                category: Category.ADVENTURE,
+            }
+
+            jest.spyOn(model, 'create').mockImplementationOnce(() => Promise.resolve(newBook  as any));
+
+            const result=await bookService.create(newBook as CreateBookDto, mockUser as User);
+
+            // console.log(result);
+
+            
+
+            expect(newBookMock).toEqual(result);
+        })
     });
 
     describe('findAll',() => {
