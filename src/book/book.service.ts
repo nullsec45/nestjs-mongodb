@@ -62,23 +62,40 @@ export class BookService {
 
     async updateById(
         id:string,
-        book:UpdateBookDto,
-        user:User
+        bookDto:UpdateBookDto,
     ):Promise<Book>{   
-        const checkBook=await this.bookModel.findById(id);
+        const isValid=mongoose.isValidObjectId(id);
 
-        if(!checkBook){
-            throw new Error('Book not found');
+        if(!isValid){
+            throw new BadRequestException('Please enter correct id.')
+        }
+         
+        const book=await this.bookModel.findById(id);
+
+        if(!book){
+            throw new NotFoundException('Book not found');
         }
 
-        return await this.bookModel.findByIdAndUpdate(id, book, {new:true});
+        const updatedBook= await this.bookModel.findByIdAndUpdate(id, bookDto, { new:true, runValidators:true } );
+
+        if (!updatedBook){
+            throw new NotFoundException('Book not found');
+        }
+
+        return updatedBook;
     }
 
     async deleteById(id:string):Promise<Book>{
+        const isValid=mongoose.isValidObjectId(id);
+
+        if(!isValid){
+            throw new BadRequestException('Please enter correct id.')
+        }
+
         const checkBook=await this.bookModel.findById(id);
 
         if(!checkBook){
-            throw new Error('Book not found');
+            throw new NotFoundException('Book not found');
         }
         
         return await this.bookModel.findByIdAndDelete(id);
