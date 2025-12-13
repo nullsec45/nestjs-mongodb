@@ -53,9 +53,8 @@ export class BookController {
     async updateBook(
         @Param('id') id:string,
         @Body() book:UpdateBookDto,
-        @Req() req
     ):Promise<Book>{
-        return this.bookService.updateById(id, book, req.user);
+        return this.bookService.updateById(id, book);
     }
 
     @Delete(':id')
