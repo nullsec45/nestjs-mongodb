@@ -18,7 +18,6 @@ describe('BookController',() => {
     let bookController:BookController;
     let bookService:BookService;
 
-    let model:Model<Book>; 
     
     const mockBook={
         _id: '690c3c84807ee1cc7e100595',
@@ -45,7 +44,7 @@ describe('BookController',() => {
     };
 
     const mockBookService={
-        find:jest.fn().mockResolvedValueOnce([mockBook]),
+        findAll:jest.fn().mockResolvedValueOnce([mockBook]),
         create:jest.fn(),
         findById:jest.fn().mockResolvedValueOnce(mockBook),
         updateById:jest.fn(),
@@ -80,22 +79,24 @@ describe('BookController',() => {
               keyword:'test',
            });
 
+
            expect(bookService.findAll).toHaveBeenCalled();
            expect(result).toEqual([mockBook]);
         });
     });
+    
 
     describe('create book',() => {
         it('should create a new book', async() => {
             const newBook={
                 title: 'Negeri Para Bedebah',
-                description: 'BOok Description',
+                description: 'Book Description',
                 author: 'Tere Liye',
                 price: 850000,
                 category: Category.ADVENTURE,
             }
 
-            mockBookService.create=jest.fn().mockRejectedValueOnce(mockBook);
+            mockBookService.create=jest.fn().mockResolvedValueOnce(mockBook);
 
             const result = await bookController.createBook(
                 newBook as CreateBookDto,
@@ -104,17 +105,15 @@ describe('BookController',() => {
 
             expect(bookService.create).toHaveBeenCalled();
             expect(result).toEqual(mockBook);
-        })
+        });
     });
 
 
     describe('get book by id',() => {
         it('should get a book by ID', async () => {
-            jest.spyOn(model,'findById').mockResolvedValue(mockBook);
-
             const result=await bookController.getBook(mockBook._id);
 
-            expect(bookService.findById).toHaveBeenCalledWith();
+            expect(bookService.findById).toHaveBeenCalledWith(mockBook._id);
             expect(result).toEqual(mockBook);
         });
     });
