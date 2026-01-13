@@ -53,7 +53,7 @@ describe('BookService',() => {
     describe('login',() => {
         it('should login user', async() => {
               const loginDto = {
-                email: 'ghulam1@gmail.com',
+                email: 'fajar@example.com',
                 password: '12345678',
             };
 
