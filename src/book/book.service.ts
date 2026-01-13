@@ -98,6 +98,7 @@ export class BookService {
             throw new NotFoundException('Book not found');
         }
         
-        return await this.bookModel.findByIdAndDelete(id);
+        await this.bookModel.findByIdAndDelete(id);
+        return {deleted:true} as any;
     }
 }
